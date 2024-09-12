@@ -5,7 +5,7 @@ let emailAddress = '';
 
 
 function onSignIn(responsePayload) {
-    let cred = {id: responsePayload.sub, token: responsePayload.credential};
+    let cred = {id: responsePayload.sub, credential: responsePayload.credential};
 
     // Store the credential using Google Identity Services
     google.accounts.id.storeCredential(cred);
@@ -16,7 +16,7 @@ function onSignIn(responsePayload) {
     console.log('Family Name: ' + responsePayload.family_name);
     console.log("Image URL: " + responsePayload.picture);
     console.log("Email: " + responsePayload.email);
-    
+
     // Redirect to the welcome page
     //window.location.href = '/welcome.html';
 
