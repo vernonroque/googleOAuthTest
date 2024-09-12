@@ -9,6 +9,13 @@ function onSignIn(responsePayload) {
 
     // Store the credential using Google Identity Services
     google.accounts.id.storeCredential(cred);
+
+    console.log("ID: " + responsePayload.sub);
+    console.log('Full Name: ' + responsePayload.name);
+    console.log('Given Name: ' + responsePayload.given_name);
+    console.log('Family Name: ' + responsePayload.family_name);
+    console.log("Image URL: " + responsePayload.picture);
+    console.log("Email: " + responsePayload.email);
     
     // Redirect to the welcome page
     window.location.href = '/welcome.html';
@@ -33,13 +40,6 @@ window.handleCredentialResponse = (response) => {
     }
 
     const responsePayload = decodeJWTResponse(response.credential);
-
-    console.log("ID: " + responsePayload.sub);
-    console.log('Full Name: ' + responsePayload.name);
-    console.log('Given Name: ' + responsePayload.given_name);
-    console.log('Family Name: ' + responsePayload.family_name);
-    console.log("Image URL: " + responsePayload.picture);
-    console.log("Email: " + responsePayload.email);
 
     emailAddress = responsePayload.email;
 
