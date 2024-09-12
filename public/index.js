@@ -1,39 +1,7 @@
 
 const signOutBtn = document.querySelector('.sign-out-btn');
-const googleAuthBtn = document.querySelector('.google-auth-btn')
+//const googleAuthBtn = document.querySelector('.google-auth-btn')
 let emailAddress = '';
-let client;
-
-function handleAuthCodeResponse(response) {
-    // Handle the response here (usually send the code to your backend)
-    console.log('Authorization Code:', response.code);
-    // Now send the code to your backend for token exchange
-    // Send the authorization code to your backend
-    fetch('/exchange-code', {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ code: response.code }),
-    })
-    .then((res) => res.json())
-    .then((data) => {
-        console.log('Tokens from backend:', data);
-    })
-    .catch((error) => {
-        console.error('Error exchanging code:', error);
-    });
-}
-
-function initializeOAuthClient() {
-    client = google.accounts.oauth2.initCodeClient({
-        client_id: '1083036317446-kqccm8s0uslc70ebkkh75a130t2joi2d.apps.googleusercontent.com', // Replace with your client ID
-        scope: 'email profile', // Scopes for your application
-        ux_mode: 'popup', // 'popup' or 'redirect'
-        callback: (response) => handleAuthCodeResponse(response),
-        });
-}
-
 
 
 function onSignIn(responsePayload) {
@@ -95,6 +63,3 @@ const signOut = () => {
 }
 
 signOutBtn.addEventListener('click',signOut);
-googleAuthBtn.addEventListener('click', () => {
-    client.requestCode()
-})
