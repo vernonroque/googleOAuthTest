@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <script src="https://accounts.google.com/gsi/client" async></script> -->
+    <script src="https://accounts.google.com/gsi/client" onload="console.log('TODO: add onload function')" async></script>
+    <script src = "index.js" defer></script>
+
+    <title>Hey Baus</title>
+</head>
+
+<body>
+    
+    <h1> Please Sign In</h1>
+
+    <div id="g_id_onload"
+        data-client_id="1083036317446-4gqoidt4tdp546er8qj62glalqhknmvc.apps.googleusercontent.com"
+        data-context="signin"
+        data-callback="handleCredentialResponse"
+        data-ux_mode="popup"
+        data-login_uri="http://localhost/5500"
+        data-auto_prompt="false">
+    </div>
+
+    <div class="g_id_signin"
+        data-type="standard"
+        data-shape="rectangular"
+        data-theme="outline"
+        data-text="signin_with"
+        data-size="large"
+        data-logo_alignment="left">
+    </div>
+
+    <button class="sign-out-btn"> Sign Out </button>
+
+</body>
+
+</html>
