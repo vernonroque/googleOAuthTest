@@ -7,8 +7,12 @@ let emailAddress = '';
 function onSignIn(responsePayload) {
     let cred = {id: responsePayload.sub, credential: responsePayload.credential};
 
-    // Store the credential using Google Identity Services
+    // Stores the credential using Google Identity Services
     google.accounts.id.storeCredential(cred);
+
+    // Update the Google Sign-In button with the new user's info
+    document.getElementById('user-image').src = responsePayload.picture;
+    document.getElementById('user-email').innerText = responsePayload.email;
 
     console.log("ID: " + responsePayload.sub);
     console.log('Full Name: ' + responsePayload.name);
