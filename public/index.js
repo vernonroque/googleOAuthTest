@@ -18,7 +18,7 @@ function onSignIn(responsePayload) {
     console.log("Email: " + responsePayload.email);
     
     // Redirect to the welcome page
-    window.location.href = '/welcome.html';
+    //window.location.href = '/welcome.html';
 
   }
 
