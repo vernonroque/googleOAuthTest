@@ -44,7 +44,7 @@ window.handleCredentialResponse = async(response) => {
       .then(data => {
         console.log('Success:', data);
         // Redirect to the homepage or dashboard
-        window.location.href = '/welcome.html';
+        //window.location.href = '/welcome.html';
       })
       .catch(error => {
         console.error('Error:', error);

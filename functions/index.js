@@ -58,6 +58,7 @@ app.post("/auth/google/callback", async (req, res) => {
 
   // Extract the token (removing 'Bearer ' prefix)
   const token = authHeader.split(" ")[1];
+  console.log("This is the token>>>", token);
 
   try {
     const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -67,6 +68,7 @@ app.post("/auth/google/callback", async (req, res) => {
     });
 
     const payload = ticket.getPayload();
+    console.log("This is the payload>>>", payload);
     const userId = payload.sub;
     const userEmail = payload.email;
     const userName = payload.name;
@@ -79,12 +81,13 @@ app.post("/auth/google/callback", async (req, res) => {
       }
 
       // Redirect to dashboard or another page after login
-      res.redirect("/");
+      // res.redirect("/");
     });
   } catch (error) {
     console.error("Token verification error:", error);
     res.status(400).json({error: "Invalid token"});
   }
+  return res.status(200).json({message: "token stored successfully"});
 });
 
 app.get("/", (req, res) => {
