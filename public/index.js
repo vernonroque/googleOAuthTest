@@ -30,9 +30,10 @@ window.handleCredentialResponse = async(response) => {
 
     emailAddress = responsePayload.email;
     const url = 'https://oauthtest-df7af.web.app';
+    const testUrl = `http://localhost:5001/oauthtest-df7af/us-central1/api`;
 
      // POST the token securely to your backend
-     fetch(`${url}/auth/google/callback`, {
+     fetch(`${testUrl}/auth/google/callback`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
