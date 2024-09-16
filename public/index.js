@@ -1,27 +1,6 @@
 
 const signOutBtn = document.querySelector('.sign-out-btn');
-//const googleAuthBtn = document.querySelector('.google-auth-btn')
 let emailAddress = '';
-
-
-// function onSignIn(responsePayload) {
-//     let cred = {id: responsePayload.sub, credential: responsePayload.credential};
-
-//     // Stores the credential using Google Identity Services
-//     google.accounts.id.storeCredential(cred);
-
-
-//     console.log("ID: " + responsePayload.sub);
-//     console.log('Full Name: ' + responsePayload.name);
-//     console.log('Given Name: ' + responsePayload.given_name);
-//     console.log('Family Name: ' + responsePayload.family_name);
-//     console.log("Image URL: " + responsePayload.picture);
-//     console.log("Email: " + responsePayload.email);
-
-//     // Redirect to the welcome page
-//     //window.location.href = '/welcome.html';
-
-// }
 
 window.handleCredentialResponse = async(response) => {
 
@@ -50,37 +29,25 @@ window.handleCredentialResponse = async(response) => {
     console.log("Email: " + responsePayload.email);
 
     emailAddress = responsePayload.email;
-    // Redirect to backend with the token
-
     const url = 'https://oauthtest-df7af.web.app';
 
-    window.location.href = `${url}/auth/google/callback?token=${encodeURIComponent(response.credential)}`;
-
-    //onSignIn(responsePayload);
-
-   
-
-    // try{
-
-    //     const response = await fetch(`${url}/auth/google`,{
-    //         method: "POST",
-    //         body: JSON.stringify({ token: responsePayload.sub }),
-    //     })
-
-    //     if (!response.ok) {
-    //         throw new Error(`Response status: ${response.status}`);
-    //       }
-        
-    //     const json = await response.json();
-    //     console.log(json);
-
-    // }
-    // catch(error){
-
-    //     console.error(error.message);
-
-    // }
-
+     // POST the token securely to your backend
+     fetch(`${url}/auth/google/callback`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+        // Redirect to the homepage or dashboard
+        window.location.href = '/welcome.html';
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
 }
 
 const signOut = () => {

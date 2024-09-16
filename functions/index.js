@@ -48,7 +48,16 @@ passport.deserializeUser((user, done) => {
 
 // Verify Token Route
 app.get("/auth/google/callback", async (req, res) => {
-  const token = req.query.token;
+  console.log("I am in the verify token route");
+  // Check if the Authorization header exists
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({error: "No token provided"});
+  }
+
+  // Extract the token (removing 'Bearer ' prefix)
+  const token = authHeader.split(" ")[1];
 
   try {
     const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
