@@ -37,7 +37,7 @@ window.handleCredentialResponse = async(response) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${responsePayload}`
+          'Authorization': `Bearer ${response.credential}`
         },
       })
       .then(response => response.json())

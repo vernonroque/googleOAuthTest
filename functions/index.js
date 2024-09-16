@@ -47,7 +47,7 @@ passport.deserializeUser((user, done) => {
 // ));
 
 // Verify Token Route
-app.get("/auth/google/callback", async (req, res) => {
+app.post("/auth/google/callback", async (req, res) => {
   console.log("I am in the verify token route");
   // Check if the Authorization header exists
   const authHeader = req.headers.authorization;
