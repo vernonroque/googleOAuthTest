@@ -29,7 +29,7 @@ window.handleCredentialResponse = async(response) => {
     console.log("Email: " + responsePayload.email);
 
     emailAddress = responsePayload.email;
-    const url = 'https://oauthtest-df7af.web.app';
+    const url = 'https://us-central1-oauthtest-df7af.cloudfunctions.net/api'; //offical functions endpoint
     const testUrl = `http://localhost:5001/oauthtest-df7af/us-central1/api`;
 
      // POST the token securely to your backend
@@ -44,7 +44,12 @@ window.handleCredentialResponse = async(response) => {
       .then(data => {
         console.log('Success:', data);
         // Redirect to the homepage or dashboard
-        //window.location.href = '/welcome.html';
+        if(data.email == "vroque88@gmail.com"){
+            window.location.href = '/vernon.html';
+        }
+        else{
+            window.location.href = '/welcome.html';
+        }
       })
       .catch(error => {
         console.error('Error:', error);

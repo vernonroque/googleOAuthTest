@@ -21,6 +21,7 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.static("public"));
 
 passport.serializeUser((user, done) => {
   done(null, user);
@@ -30,25 +31,10 @@ passport.deserializeUser((user, done) => {
   done(null, user);
 });
 
-// don't need GoogleStrategy because I have a custom route for login
-// passport.use(new GoogleStrategy({
-
-//   clientID: "YOUR_GOOGLE_CLIENT_ID",
-//   clientSecret: "YOUR_GOOGLE_CLIENT_SECRET",
-//   callbackURL: "/auth/google/callback",
-// },
-
-// ((accessToken, refreshToken, profile, done) => {
-//   // Store the accessToken, refreshToken, and user profile on the server
-//   // Set a 1-day expiration for the session
-//   return done(null, {accessToken, refreshToken, profile});
-// }),
-
-// ));
-
 // Verify Token Route
 app.post("/auth/google/callback", async (req, res) => {
   console.log("I am in the verify token route");
+  let officialEmail = "";
   // Check if the Authorization header exists
   const authHeader = req.headers.authorization;
 
@@ -73,21 +59,19 @@ app.post("/auth/google/callback", async (req, res) => {
     const userEmail = payload.email;
     const userName = payload.name;
 
+    officialEmail = userEmail;
     // Authenticate user using Passport
     req.login({id: userId, name: userName, email: userEmail}, (err) => {
       if (err) {
         console.error("Login error:", err);
         return res.status(500).json({message: "Login failed"});
       }
-
-      // Redirect to dashboard or another page after login
-      // res.redirect("/");
     });
   } catch (error) {
     console.error("Token verification error:", error);
     res.status(400).json({error: "Invalid token"});
   }
-  return res.status(200).json({message: "token stored successfully"});
+  res.status(201).json({email: officialEmail});
 });
 
 app.get("/", (req, res) => {
@@ -95,17 +79,10 @@ app.get("/", (req, res) => {
   res.status(200).send({"message": " hello world "});
 });
 
-// app.get("/auth/google/callback",
-//     passport.authenticate("google", {failureRedirect: "/"}),
-//     (req, res) => {
-//       res.redirect("/dashboard");
-//     },
-// );
-
 // Checks session expiration on every request
 app.use((req, res, next) => {
   if (!req.isAuthenticated()) {
-    return res.redirect("/");
+    return res.redirect("/index.html");
   }
 
   next();
