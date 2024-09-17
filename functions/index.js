@@ -1,5 +1,8 @@
+/* eslint-disable max-len */
 const express = require("express");
 const session = require("express-session");
+const path = require("path");
+
 const passport = require("passport");
 // const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const {OAuth2Client} = require("google-auth-library");
@@ -74,7 +77,7 @@ app.post("/auth/google/callback", async (req, res) => {
     const authorizedEmails = ["vroque88@gmail.com"];
 
     if (authorizedEmails.includes(userEmail)) {
-      res.json({email: userEmail, redirect: "/vernon.html"});
+      res.json({email: userEmail, redirect: "/protected/vernon.html"});
     } else {
       res.json({email: userEmail, redirect: "/welcome.html"});
     }
@@ -89,6 +92,38 @@ app.get("/", (req, res) => {
   console.log("Hello World");
   res.status(200).send({"message": " hello world "});
 });
+
+app.get("/protected-vernon", async (req, res) => {
+  const token = req.headers.authorization.split(" ")[1]; // Get token from headers
+  const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+  if (!token) {
+    return res.status(401).send("Unauthorized"); // No token = unauthorized
+  }
+
+  try {
+    // Verify the token using Google OAuth2Client
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID, // Replace with your actual client ID
+    });
+
+    const payload = ticket.getPayload();
+    console.log("This is the payload>>>", payload);
+    const userEmail = payload.email;
+
+    const authorizedEmails = ["vroque88@gmail.com"]; // List of authorized emails
+
+    if (authorizedEmails.includes(userEmail)) {
+      res.sendFile(path.join(__dirname, "protected", "vernon.html")); // Serve page if authorized
+    } else {
+      res.status(403).send("Forbidden"); // Deny access if unauthorized
+    }
+  } catch (error) {
+    res.status(401).send("Invalid token"); // Handle invalid tokens
+  }
+});
+
 
 // Checks session expiration on every request
 app.use((req, res, next) => {
