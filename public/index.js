@@ -44,12 +44,7 @@ window.handleCredentialResponse = async(response) => {
       .then(data => {
         console.log('Success:', data);
         // Redirect to the homepage or dashboard
-        if(data.email == "vroque88@gmail.com"){
-            window.location.href = '/vernon.html';
-        }
-        else{
-            window.location.href = '/welcome.html';
-        }
+            window.location.href = data.redirect;
       })
       .catch(error => {
         console.error('Error:', error);

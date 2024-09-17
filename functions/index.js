@@ -34,7 +34,7 @@ passport.deserializeUser((user, done) => {
 // Verify Token Route
 app.post("/auth/google/callback", async (req, res) => {
   console.log("I am in the verify token route");
-  let officialEmail = "";
+  // let officialEmail = "";
   // Check if the Authorization header exists
   const authHeader = req.headers.authorization;
 
@@ -59,7 +59,7 @@ app.post("/auth/google/callback", async (req, res) => {
     const userEmail = payload.email;
     const userName = payload.name;
 
-    officialEmail = userEmail;
+    // officialEmail = userEmail;
     // Authenticate user using Passport
     req.login({id: userId, name: userName, email: userEmail}, (err) => {
       if (err) {
@@ -67,11 +67,22 @@ app.post("/auth/google/callback", async (req, res) => {
         return res.status(500).json({message: "Login failed"});
       }
     });
+
+    // put privleges section below
+
+    // Define authorized emails
+    const authorizedEmails = ["vroque88@gmail.com"];
+
+    if (authorizedEmails.includes(userEmail)) {
+      res.json({email: userEmail, redirect: "/vernon.html"});
+    } else {
+      res.json({email: userEmail, redirect: "/welcome.html"});
+    }
   } catch (error) {
     console.error("Token verification error:", error);
     res.status(400).json({error: "Invalid token"});
   }
-  res.status(201).json({email: officialEmail});
+  // res.status(201).json({email: officialEmail});
 });
 
 app.get("/", (req, res) => {
