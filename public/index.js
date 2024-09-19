@@ -40,7 +40,11 @@ window.handleCredentialResponse = async(response) => {
           'Authorization': `Bearer ${response.credential}`
         },
       })
-      .then(response => response.json())
+      .then(response =>{ 
+        
+        console.log(response);
+        return response.json()
+      })
       .then(data => {
         console.log('Success:', data);
         // Redirect to the homepage or dashboard
