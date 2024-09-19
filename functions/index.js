@@ -121,6 +121,7 @@ app.get("/", (req, res) => {
 
 // Define the /admin route and protect it with the admin role
 app.get("/admin", checkRole("admin"), (req, res) => {
+  console.log("I am in the admin route");
   res.sendFile(path.join(__dirname, "protected", "classified.html")); // Serve the admin page
 });
 
