@@ -14,7 +14,7 @@ require("dotenv").config();
 
 // Instantiate the app here
 const app = express();
-app.use(cors());
+app.use(cors({origin: true}));
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
