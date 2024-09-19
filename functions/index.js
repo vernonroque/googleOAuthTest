@@ -62,7 +62,7 @@ passport.deserializeUser(async (id, done) => {
 });
 
 // Verify Token Route
-app.post("/api/auth/google/callback", async (req, res) => {
+app.post("https://us-central1-oauthtest-df7af.cloudfunctions.net/api/auth/google/callback", async (req, res) => {
   // console.log("I am in the verify token route");
   // Check if the Authorization header exists
   const authHeader = req.headers.authorization;
