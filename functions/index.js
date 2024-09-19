@@ -1,3 +1,4 @@
+/* eslint-disable require-jsdoc */
 /* eslint-disable max-len */
 const express = require("express");
 const session = require("express-session");
@@ -22,22 +23,47 @@ app.use(session({
   cookie: {maxAge: 24 * 60 * 60 * 1000}, // 1 day expiration in milliseconds
 }));
 
+const users = [
+  {id: "1", name: "Vernon Roque", email: "vroque88@gmail.com", role: "admin"},
+  {id: "2", name: "Jane Smith", email: "jane@example.com", role: "user"},
+  {id: "3", name: "John Doe", email: "john@example.com", role: "user"},
+
+  // Add more demo users as needed
+];
+
+// Middleware to check for admin role
+function checkRole(role) {
+  return function(req, res, next) {
+    if (req.user && req.user.role === role) {
+      next(); // User has the required role
+    } else {
+      res.status(403).send("Access denied: insufficient privileges");
+    }
+  };
+}
+
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static("public"));
+app.use(express.static("protected"));
 
 passport.serializeUser((user, done) => {
-  done(null, user);
+  done(null, user.id);
 });
 
-passport.deserializeUser((user, done) => {
-  done(null, user);
+passport.deserializeUser(async (id, done) => {
+  const user = users.find((user) => user.id === id); // Find the user in the in-memory array
+  if (user) {
+    done(null, user); // Pass the user object to req.user
+  } else {
+    done(new Error("User not found"));
+  }
 });
 
 // Verify Token Route
 app.post("/auth/google/callback", async (req, res) => {
-  console.log("I am in the verify token route");
-  // let officialEmail = "";
+  // console.log("I am in the verify token route");
   // Check if the Authorization header exists
   const authHeader = req.headers.authorization;
 
@@ -47,7 +73,7 @@ app.post("/auth/google/callback", async (req, res) => {
 
   // Extract the token (removing 'Bearer ' prefix)
   const token = authHeader.split(" ")[1];
-  console.log("This is the token>>>", token);
+  // console.log("This is the token>>>", token);
 
   try {
     const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -57,29 +83,29 @@ app.post("/auth/google/callback", async (req, res) => {
     });
 
     const payload = ticket.getPayload();
-    console.log("This is the payload>>>", payload);
+    // console.log("This is the payload>>>", payload);
     const userId = payload.sub;
     const userEmail = payload.email;
     const userName = payload.name;
 
-    // officialEmail = userEmail;
+    // Assign role based on email (you could use a database for more complex logic)
+    let role = "user"; // Default role
+    if (userEmail === "vroque88@gmail.com") {
+      role = "admin";
+    }
     // Authenticate user using Passport
-    req.login({id: userId, name: userName, email: userEmail}, (err) => {
+    req.login({id: userId, name: userName, email: userEmail, role}, (err) => {
       if (err) {
         console.error("Login error:", err);
         return res.status(500).json({message: "Login failed"});
       }
     });
 
-    // put privleges section below
-
-    // Define authorized emails
-    const authorizedEmails = ["vroque88@gmail.com"];
-
-    if (authorizedEmails.includes(userEmail)) {
-      res.json({email: userEmail, redirect: "/protected/vernon.html"});
+    // Redirect based on the role
+    if (role === "admin") {
+      res.json({redirect: "/admin"}); // Redirect to /admin for admin users
     } else {
-      res.json({email: userEmail, redirect: "/welcome.html"});
+      res.json({redirect: "/welcome.html"}); // Redirect to /welcome for regular users
     }
   } catch (error) {
     console.error("Token verification error:", error);
@@ -93,37 +119,10 @@ app.get("/", (req, res) => {
   res.status(200).send({"message": " hello world "});
 });
 
-app.get("/protected-vernon", async (req, res) => {
-  const token = req.headers.authorization.split(" ")[1]; // Get token from headers
-  const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
-  if (!token) {
-    return res.status(401).send("Unauthorized"); // No token = unauthorized
-  }
-
-  try {
-    // Verify the token using Google OAuth2Client
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID, // Replace with your actual client ID
-    });
-
-    const payload = ticket.getPayload();
-    console.log("This is the payload>>>", payload);
-    const userEmail = payload.email;
-
-    const authorizedEmails = ["vroque88@gmail.com"]; // List of authorized emails
-
-    if (authorizedEmails.includes(userEmail)) {
-      res.sendFile(path.join(__dirname, "protected", "vernon.html")); // Serve page if authorized
-    } else {
-      res.status(403).send("Forbidden"); // Deny access if unauthorized
-    }
-  } catch (error) {
-    res.status(401).send("Invalid token"); // Handle invalid tokens
-  }
+// Define the /admin route and protect it with the admin role
+app.get("/admin", checkRole("admin"), (req, res) => {
+  res.sendFile(path.join(__dirname, "protected", "classified.html")); // Serve the admin page
 });
-
 
 // Checks session expiration on every request
 app.use((req, res, next) => {
